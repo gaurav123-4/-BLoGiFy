@@ -3,32 +3,31 @@ const { Router } = require("express");
 const router = Router();
 
 router.get("/signin", (req, res) => {
-    return res.render("signin", {title: "Sign In Page"});
+  return res.render("signin", { title: "Sign In Page" });
 });
 
-router.get("/signup", (req, res) => {  
-  return  res.render("signup", {title: "Sign Up Page"});
+router.get("/signup", (req, res) => {
+  return res.render("signup", { title: "Sign Up Page" });
 });
 
-router.post("/signup", async (req, res) => {
-    const {fullName, email, password} = req.body;
-await User.create({
-    fullName ,
-    email,
-    password,
-}
+router.post("/signup", (req, res) => {
+  const { fullName, email, password } = req.body;
 
-)
-    newUser.save()
-    .then(() => {
-        res.redirect("/signin");
-    })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error creating user");
-    });
+  if (!fullName || !email || !password) {
+    return res.status(400).send("All fields are required.");
+  }
 
-    return res.redirect("/");
+  console.log("New user signup:", { fullName, email });
+  return res.redirect("/user/signin");
 });
 
+
+router.post("/signin", async (req, res) => {
+  const { fullName ,email, password } = req.body;
+const user = await User.matchPassword(email, password);
+
+
+console.log('User' , user)
+  return res.redirect("/");
+});
 module.exports = router;
